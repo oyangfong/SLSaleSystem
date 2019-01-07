@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.0" 
+	xmlns="http://java.sun.com/xml/ns/javaee" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+	http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+  <display-name></display-name>	
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+  
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:applicationContext-*.xml</param-value>
+  </context-param>
+  
+  <!-- 解决中文乱码 -->
+  <filter>
+    <filter-name>encodingFilter</filter-name>
+    <filter-class>
+	        org.springframework.web.filter.CharacterEncodingFilter
+	    </filter-class>
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+    <init-param>
+      <param-name>forceEncoding</param-name>
+      <param-value>true</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>encodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
+  <!-- spring mvc  -->
+  <servlet>
+    <servlet-name>spring</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>classpath:spring-servlet.xml</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>spring</servlet-name>
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
+  
+  <!-- 配置spring监听 -->
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  
+  <!--  
+    在Spring2.0中除了以前的Singleton和Prototype外又加入了三个新的web作用域，分别为request、session和global session，
+           如果你想让容器里的某个bean拥有其中某种新的web作用域，除了在bean级上配置相应的scope属性，还必须在容器级做一个额外的初始化配置。 
+    也许会有一个疑问，已经通过ContextLoaderListener(或ContextLoaderServlet)将Web容器与Spring容器整合，
+           为什么这里还要用额外的RequestContextListener以支持Bean的另外3个作用域，
+           原因是: ContextLoaderListener实现ServletContextListener监听器接口，
+                       而ServletContextListener只负责监听Web容器的启动和关闭的事件。
+           RequestContextListener实现ServletRequestListener监听器接口，该监听器监听HTTP请求事件，
+            Web服务器接收的每次请求都会通知该监听器。
+          通过配置RequestContextListener，Spring容器与Web容器结合的更加密切。
+  -->
+  <listener>
+    <listener-class>    
+            org.springframework.web.context.request.RequestContextListener    
+        </listener-class>
+  </listener>
+  
+</web-app>
